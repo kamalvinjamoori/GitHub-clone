@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hotstar</title>
+
+        <style>
+            body {
+
+                background-color: #0c111b;
+                color: white;
+                font-family: sans-serif;
+            }
+
+            #navbar {
+                display: flex;
+                justify-content: space-between;
+
+                height: 50px;
+            }
+
+            #logo img {
+
+                height: 100%;
+            }
+
+            #input {
+                width: 700px;
+                height: 90%;
+                border-radius: 25px;
+                border: 1px solid grey;
+                text-align: center;
+                margin-right: 50px;
+            }
+
+            button {
+                width: 100px;
+                height: 80%;
+                border-radius: 20px;
+                background-color: teal;
+                color: white;
+                border: 0px;
+                margin-right: 20px;
+
+            }
+
+            #container {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                width: 80%;
+                margin: auto;
+                margin-top: 50px;
+                text-align: center;
+
+
+                /* padding-top: 10px; */
+            }
+
+            #poster {
+                width: 200px;
+                height: 200px;
+            }
+
+            #movies {
+                width: 55%;
+                margin: auto;
+                height: 150px;
+                border: 1px solid black;
+                border-top: none;
+                overflow: scroll;
+                display: none;
+                cursor: pointer;
+
+
+            }
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            #container1 {
+                display: flex;
+                width: 60%;
+                margin: auto;
+                justify-content: space-around;
+                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            }
+
+
+            @media all and (min-width:50px) and (max-width:500px) {
+
+                #navbar {
+                    display: flex;
+                    justify-content: space-between;
+
+                    height: 40px;
+                }
+
+                #container {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-rows: auto auto;
+                    width: 90%;
+                    margin: auto;
+                    gap: 30px;
+                }
+
+                #poster {
+                    width: 100px;
+                    height: 100px;
+                }
+
+                #input {
+                    width: auto;
+                    height: 60%;
+                    border-radius: 20px;
+                    border: 1px solid grey;
+                    text-align: center;
+                }
+
+                button {
+                    width: auto;
+                    height: 80%;
+                    /* border-radius: 20px; */
+                    background-color: teal;
+                    color: white;
+                    border: 0px;
+                    /* margin-left: 20px; */
+
+                }
+
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="navbar">
+            <div id="logo"><img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR249WSKCr_uXw9NB03kBaNK3WZwi9rbkWFSA&usqp=CAU"
+                    alt=""></div>
+            <div id="search"><input type="text" name="" id="input" placeholder="Enter any movie/show name you want">
+                <!-- <button>Search</button> -->
+
+            </div>
+            <div>
+                <button id="trending">trending</button>
+            </div>
+
+        </div>
+        <div id="movies">
+
+        </div>
+
+
+        <div id="container">
+
+
+
+        </div>
+
+
+
+        <div id="container1">
+
+        </div>
+    </body>
+
+</html>
+
+<script>
+
+    document.getElementById("trending").addEventListener("click", function () {
+        window.location.href = "./trending.html"
+    })
+
+    let url = "https://api.themoviedb.org/3/search/movie?api_key=416b28d04deec705fbd6ded8e702bc0d&language=en-US&page=1&include_adult=false&query="
+
+    document.querySelector("#input").addEventListener("input", debounce)
+
+    // document.querySelector("#logo").addEventListener("click", function () {
+    //     getdata1()
+    // })
+    // getdata1()
+    // // 
+
+
+    async function getdata() {
+
+        try {
+
+            var value = document.querySelector("#input").value
+            var x = await fetch(url + value)
+            // var x = await fetch("https://www.omdbapi.com/?i=tt3896198&apikey=7ad279f&S=avengers&t=avengers")
+            var arr = await x.json()
+            // console.log('arr:', arr)
+            var y = arr.results
+            // console.log('arr:', y)
+            // console.log('x:', x)
+            return y
+        }
+        catch (err) {
+            console.log('raj:', "raj")
+
+        }
+
+
+    }
+
+    async function getdata1() {
+
+        try {
+
+
+            var x = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=416b28d04deec705fbd6ded8e702bc0d&language=en-US&page=1`)
+            // var x = await fetch("https://www.omdbapi.com/?i=tt3896198&apikey=7ad279f&S=avengers&t=avengers")
+            var arr = await x.json()
+            // console.log('arr:', arr)
+            var y = arr.results
+            console.log('arr:', y)
+            // console.log('x:', x)
+            displayData(y)
+        }
+        catch (err) {
+            console.log('raj:', "raj")
+
+        }
+
+
+    }
+
+
+
+
+
+
+    function displayData(arr) {
+
+
+        document.querySelector("#container").innerHTML = ""
+        document.querySelector("#container1").innerHTML = ""
+        arr.map(function (elem) {
+            let div = document.createElement("div")
+            let img = document.createElement("img")
+            img.id = "poster"
+
+            if (elem.poster_path == null) {
+                img.src = "https://via.placeholder.com/200"
+            }
+            else {
+                img.src = "https://image.tmdb.org/t/p/w500/" + elem.poster_path
+            }
+            let title = document.createElement("h4")
+            title.innerHTML = elem.title
+            let year = document.createElement("p")
+            year.innerHTML = "Release" + " " + ":" + " " + elem.release_date
+            let imdb = document.createElement("p")
+            imdb.innerHTML = "IMDb ID" + " " + ":" + " " + elem.id
+            div.append(img, title, year, imdb)
+            div.style.marginTop = "10px"
+            div.style.boxShadow = "rgba(166, 166, 170, 0.2) 0px 7px 29px 0px"
+            // div.addEventListener("click", function showmovie() {
+            //     console.log(elem)
+            // })
+            document.querySelector("#container").append(div)
+
+        })
+    }
+
+
+    function displaySearch(arr) {
+
+        let t = document.querySelector("#movies")
+        t.style.display = "block"
+
+
+        let movie = document.querySelector("#movies")
+
+        movie.innerHTML = ""
+        arr.forEach(function (elem) {
+
+
+            let p = document.createElement("p")
+            p.innerText = elem.title
+            p.addEventListener("click", test)
+            function test() {
+                // console.log(elem.id)
+
+                movie.style.display = "none"
+
+                last(elem.id)
+
+            };
+
+            movie.append(p)
+
+        })
+    }
+    async function main() {
+        try {
+            let data = await getdata()
+
+            if (data === undefined) {
+                document.querySelector("#container").innerHTML = "Movie Not found"
+                document.querySelector("#container1").innerHTML = ""
+                return false
+            }
+            displaySearch(data)
+
+        }
+        catch (error) {
+            console.log('error:', error)
+        }
+    }
+
+    var timerId;
+    function debounce() {
+
+        if (timerId) {
+            clearTimeout(timerId)
+        }
+
+
+        timerId = setTimeout(function () {
+            main()
+        }, 400)
+    }
+
+
+
+    async function last(x) {
+
+        try {
+
+            let datam = await fetch(`https://api.themoviedb.org/3/movie/${x}?api_key=416b28d04deec705fbd6ded8e702bc0d&language=en-US`)
+
+            let maindata = await datam.json()
+            // console.log('maindata:', maindata.imdb_id)
+
+            let datan = await fetch(`https://www.omdbapi.com/?i=${maindata.imdb_id}&apikey=7ad279f`)
+
+            let mdata = await datan.json()
+            // console.log('mdata:', mdata)
+
+            displayDataSingle(mdata)
+
+
+        } catch (error) {
+            console.log('error:', error)
+
+        }
+    }
+
+
+
+    function displayDataSingle(maindata) {
+        // document.querySelector("#container0") = ""
+        document.querySelector("input").addEventListener("onkeyup", fnctn)
+
+        function fnctn() {
+            let t = document.querySelector("#movies")
+            t.style.display = "block"
+        }
+
+        // let t = document.querySelector("#movies")
+        // t.style.display = "block"
+
+        document.querySelector("#container").innerHTML = ""
+        document.querySelector("#container1").innerHTML = ""
+
+        let div = document.createElement("div")
+        let div1 = document.createElement("div")
+        let img = document.createElement("img")
+        img.id = "poster"
+        if (maindata.Poster === "N/A") {
+            img.src = "https://via.placeholder.com/200"
+        }
+        else {
+            img.src = maindata.Poster
+        }
+        // img.src = maindata.belongs_to_collection.poster_path
+        let title = document.createElement("h4")
+        title.innerHTML = maindata.Title
+        let year = document.createElement("p")
+        year.innerHTML = "Year " + ": " + maindata.Year
+        let direct = document.createElement("p")
+        direct.innerHTML = "Director" + " " + ":" + " " + maindata.Director
+        let cast = document.createElement("p")
+        cast.innerHTML = "cast" + " " + ":" + " " + maindata.Actors
+        let imdb = document.createElement("p")
+        imdb.innerHTML = "IMDb Rating " + ": " + maindata.imdbRating
+        div1.append(img)
+
+        let div2 = document.createElement("div")
+        div2.append(title, direct, cast, year, imdb)
+        // div.append()
+        // div.style.display = "flex"
+        document.querySelector("#container1").append(div1, div2)
+
+    }
+
+</script>
